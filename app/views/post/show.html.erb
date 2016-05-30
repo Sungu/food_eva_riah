@@ -1,0 +1,49 @@
+<div class="jumbotron">
+  <img src="<%= @post.img %>" class="" width="100%">
+  <h1><%= @post.title %></h1>
+  <p class="lead"><%= @post.content %></p>
+  <p id="count"><%= @post.avg.round(1) %> 점 (<%= @post.comments.count %> 명)</p>
+  <%= form_tag "/comment/create", method: "post" do %>
+    <span class="star-rating">
+      <input type="radio" name="rating" value="1"><i></i>
+      <input type="radio" name="rating" value="2"><i></i>
+      <input type="radio" name="rating" value="3"><i></i>
+      <input type="radio" name="rating" value="4"><i></i>
+      <input type="radio" name="rating" value="5"><i></i>
+    </span>
+    <br>
+    <input type="hidden" name="post_id" value="<%= @post.id %>">
+    <input type="text" class="form-control" name="msg" placeholder="별점 체크 후 평가를 남겨주세요">
+    <br>
+    <button class="btn btn-success" href="#" role="button">평가하기</button>
+  <% end %>
+</div>
+<div class="row text-center">
+  <div class="col-lg-12">
+    <% @post.comments.reverse.each do |a| %>
+      <!-- 각 코멘트들 -->
+      <div class="well">
+        <span class="star-rating small">
+          <% 1.upto(5) do |i| %>
+            <% if i == a.score %>
+              <i class="on"></i>
+            <% else %>
+              <i></i>
+            <% end %>
+          <% end %>
+        </span>
+        <p><%= User.find(a.user_id).email %></p>
+        <p><%= a.comment%></p>
+      </div>
+    <% end %>
+  </div>
+  
+  <%= link_to '뒤로가기', "/", class: "btn btn-default" %>
+  <% if user_signed_in? %>
+    <% if current_user.id = @post.user_id %>
+      <%= link_to '수정하기', "/post/edit/#{@post.id}", class: "btn btn-default" %>
+      <%= link_to '삭제하기', "/post/delete/#{@post.id}", class: "btn btn-default" %>
+    <% end %>
+  <% end %>
+  <div style="margin-bottom:20px"></div>
+</div>
